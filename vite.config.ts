@@ -1,12 +1,13 @@
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
-  server: {
+  preview: {
+    host: true,
     port: 3000,
-  },
-  build: {
-    outDir: 'dist',
+    allowedHosts: [
+      'smart-attendance-mangement-system-2.onrender.com'
+    ]
   }
-});
+})
