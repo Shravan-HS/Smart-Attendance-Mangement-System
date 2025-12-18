@@ -7,7 +7,7 @@ export default defineConfig({
     host: true,
     port: 3000,
     allowedHosts: [
-      'smart-attendance-mangement-system-5.onrender.com'
+      'smart-attendance-mangement-system-6.onrender.com'
     ]
   }
 })
