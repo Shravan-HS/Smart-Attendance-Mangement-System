@@ -1,28 +1,35 @@
 import { GoogleGenAI } from "@google/genai";
 import { AttendanceRecord } from "../types";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+// ✅ Correct way for Vite (browser)
+const ai = new GoogleGenAI({
+  apiKey: import.meta.env.VITE_GEMINI_API_KEY
+});
 
-export const analyzeAttendance = async (records: AttendanceRecord[]): Promise<string> => {
+export const analyzeAttendance = async (
+  records: AttendanceRecord[]
+): Promise<string> => {
+
   if (records.length === 0) {
     return "No attendance records available to analyze.";
   }
 
   try {
-    // Simplify data for token efficiency
-    const dataSummary = records.map(r => `${r.date}: ${r.studentName} was ${r.status}`).join('\n');
+    const dataSummary = records
+      .map(r => `${r.date}: ${r.studentName} was ${r.status}`)
+      .join('\n');
 
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
-      contents: `You are a helpful teaching assistant. Analyze the following attendance data. 
-      Identify patterns, such as students with frequent absences or perfect attendance. 
-      Provide a concise summary report for the teacher.
-      
-      Data:
-      ${dataSummary}`,
+      model: "gemini-2.5-flash",
+      contents: `You are a helpful teaching assistant. Analyze the following attendance data.
+Identify patterns, such as students with frequent absences or perfect attendance.
+Provide a concise summary report for the teacher.
+
+Data:
+${dataSummary}`,
       config: {
         maxOutputTokens: 500,
-        temperature: 0.4,
+        temperature: 0.4
       }
     });
 
@@ -33,17 +40,20 @@ export const analyzeAttendance = async (records: AttendanceRecord[]): Promise<st
   }
 };
 
-export const refineMessage = async (message: string): Promise<string> => {
+export const refineMessage = async (
+  message: string
+): Promise<string> => {
+
   if (!message.trim()) return "";
 
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: "gemini-2.5-flash",
       contents: `You are a professional editor. Rewrite the following message to be more professional, polite, and concise, while preserving the original intent. Return only the refined message.
-      
-      Original Message: "${message}"`,
+
+Original Message: "${message}"`,
       config: {
-        temperature: 0.3,
+        temperature: 0.3
       }
     });
 
